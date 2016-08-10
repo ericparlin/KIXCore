@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_package version="1.0">
+    <CVS>$Id$</CVS>
+    <Name>KIXCore</Name>
+    <Vendor>c.a.p.e. IT GmbH</Vendor>
+    <URL>http://www.cape-it.de/</URL>
+    <Description Lang="en">KIXCore - Core package for KIX tsunami framework.</Description>
+    <Description Lang="de">KIXCore - Kernpaket fuer den KIX Tsunami-Ansatz.</Description>
+    <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
+    <Version>5.0.0</Version>
+    <Framework>5.0.11</Framework>
+    <BuildDate>?</BuildDate>
+    <BuildHost>?</BuildHost>
+    <Filelist>
+        <File Permission="644" Location="doc/CHANGES_KIXCore.md"/>
+
+        <File Permission="644" Location="doc/en/KIXCore.pod"/>
+
+        <File Permission="644" Location="Kernel/System/KIXUtils.pm"/>
+
+        <File Permission="644" Location="KIXCore/Kernel/Language.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/Config/Files/KIXCore_Cache.xml"/>
+        <File Permission="644" Location="KIXCore/Kernel/Config/Files/KIXCore_ConfigureCallHome.xml"/>
+        <File Permission="644" Location="KIXCore/Kernel/Language/de_KIXCore.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/Modules/AdminPackageManager.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/Output/HTML/Layout.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/Output/HTML/Layout/Loader.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/Output/HTML/Layout/Template.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/Output/Template/Provider.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Cache/Memcached.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Admin/MultipleCustomPackages/CleanUpConfigPm.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Admin/MultipleCustomPackages/List.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Admin/MultipleCustomPackages/Rebuild.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Admin/MultipleCustomPackages/Register.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Admin/MultipleCustomPackages/Unregister.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Maint/LoaderCache/Rebuild.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Maint/Memcached/Details.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Maint/Memcached/List.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Maint/Memcached/Remove.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Console/Command/Maint/Memcached/Type.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/LinkObject.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Loader.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Package.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/Stats.pm"/>
+        <File Permission="644" Location="KIXCore/Kernel/System/SysConfig.pm"/>
+
+        <File Permission="644" Location="var/packagesetup/KIXCore.pm"/>
+    </Filelist>
+    <DatabaseInstall></DatabaseInstall>
+    <DatabaseReinstall></DatabaseReinstall>
+    <DatabaseUpgrade></DatabaseUpgrade>
+    <DatabaseUninstall></DatabaseUninstall>
+    <CodeInstall Type="post">
+
+        # create the package name
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+
+        $Kernel::OM->Get($CodeModule)->CodeInstall();
+
+    </CodeInstall>
+    <CodeReinstall Type="post">
+
+        # create the package name
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+
+        $Kernel::OM->Get($CodeModule)->CodeReinstall();
+
+    </CodeReinstall>
+    <CodeUpgrade Type="post">
+
+        # create the package name
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+
+        # discard internally stored object, so that the next access to object creates them newly
+        $Kernel::OM->ObjectsDiscard(
+            Objects            => [$CodeModule],
+            ForcePackageReload => 1,
+        );
+
+        $Kernel::OM->Get($CodeModule)->CodeUpgrade();
+
+    </CodeUpgrade>
+    <CodeUninstall Type="pre">
+
+        # create the package name
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+
+        $Kernel::OM->Get($CodeModule)->CodeUninstall();
+
+    </CodeUninstall>
+    <IntroInstall Type="pre" Title="Install Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>WELCOME</strong>
+        <br/>
+        <br/>
+        You are about to install the OTRS module KIXCore. This package provides a more flexible and more general approach for extensions of extensions than the common Custom-folder of OTRS itself.<br/>
+        <br/>
+        <br/>
+        <strong>Recommended perl modules:</strong>
+        <br/>
+        <br/>
+        <ul>
+        <li>Data::Compare - required if you want to keep track of SysConfig changes, e.g. what was changed by which user. However, the other parts of this OTRS-extensions will work without it.</li>
+        <li>Cache::Memcached::Fast - required if you want to use Memcached for internal caching.</li>
+        </ul>
+        <br/>
+        <br/>
+        <strong>Important Advice:</strong><br/>
+        <br/>
+        This package requires that the user which installs the package (i.e. webserver user) has got write permissions on file Config.pm and apache2-perl-startup.pl. If this is not the case, the installation will fail.You should then try to run "bin/otrs.Console.pl Admin::MultipleCustomPackages::Register --package-name KIXCore --priority 000" in order to get this extension running.<br/>
+        <br/>
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroInstall>
+    <IntroInstall Type="post" Title="Installation Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>Important Advice:</strong>
+        <br/>
+        <br/>
+        If you are using OTRS with modperl, the webserver must be restarted now. Please do this before you continue the use of this OTRS installation.
+        <br/>
+        <br/>
+        <strong>Notice</strong>
+        <br/>
+        <br/>
+        If you want to have a explanation how this extension works, please have a look at the documentation provided in doc-directory.
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroInstall>
+    <IntroUpgrade Type="pre" Title="Upgrade Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>WELCOME</strong>
+        <br/>
+        <br/>
+        You are about to upgrade the KIXCore extensions package for OTRS.<br/>
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroUpgrade>
+    <IntroUninstall Type="pre" Title="Uninstallation Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>WELCOME</strong>
+        <br/>
+        <br/>
+        You are about to UNINSTALL the KIXCore extensions package for OTRS.<br/>
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroUninstall>
+</otrs_package>
